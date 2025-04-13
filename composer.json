@@ -1,0 +1,16 @@
+{
+    "require": {
+        "paga/paga-collect": "^1.1",
+        "smile-identity/smile-identity-core": "^4.0",
+        "firebase/php-jwt": "^6.10",
+        "google/auth": "^1.46",
+        "dompdf/dompdf": "^3.1",
+        "kreait/firebase-php": "^7.18",
+        "phpmailer/phpmailer": "^6.9"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    }
+}
