@@ -2,7 +2,6 @@
 
 namespace App\Libraries;
 
-use App\Models\AppModel;
 use Exception;
 
 class Controller

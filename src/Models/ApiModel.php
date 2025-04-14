@@ -1,5 +1,5 @@
 <?php
-namespace App\Model;
+namespace App\Models;
 
 use App\Libraries\Db;
 use App\Libraries\Emails_Helper;

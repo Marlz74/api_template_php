@@ -13,7 +13,7 @@ class Api extends Controller
     /**
      * @var \App\Model\ApiModel
      */
-    private $model;
+    protected $model;
 
     // /**
     //  * @var \App\Model\AdminModel
@@ -33,22 +33,32 @@ class Api extends Controller
     {
         $this->model('ApiModel');
         
-        $this->checkAccess();
     }
+
 
     /**
-     * Check user access and set user ID.
-     * @throws \Exception
+     * Summary of getindex
+     * @return void
      */
-    private function checkAccess(): void
-    {
-        // $res = $this->model->access();
-
-        // if ($res['code'] !== 200) {
-        //     Helpers::jsonResponse(403, 'Unauthorized! Access denied, You do not have permission to access this resource.');
-        // }
-
-        // $this->userId = $res['data']->userId ?? null;
+    public function getindex(){
+        Helpers::jsonResponse([
+            'statusCode' => 200,
+            'message' => 'API is active and working',
+            'status' => true
+        ]);
+        exit;
     }
 
+    public function getTYo($id=null){
+        Helpers::jsonResponse([
+            'statusCode' => 200,
+            'message' => 'API is active and working',
+            'status' => true,
+            "data"=>[
+                "id"=>$id,
+                "name"=>"test"
+            ]
+        ]);
+        exit;
+    }
 }

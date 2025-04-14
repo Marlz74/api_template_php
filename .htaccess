@@ -1,10 +1,13 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /transmitex
+    # RewriteBase /api_template
 
+    # Restrict direct access to the src directory
+    RewriteRule ^src/ - [F,L]
     # Always rewrite all requests to index.php
     
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
+    
     RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
 </IfModule>

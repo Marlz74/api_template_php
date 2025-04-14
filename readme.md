@@ -1,141 +1,106 @@
-# API Backend Setup Guide
+# API Template
 
-This guide explains how to set up the API backend on a server, including the required folder structure, database configuration, and cron jobs.
+A clean and extendable PHP API project structure using the MVC pattern and Swagger for documentation.
 
-## Prerequisites
-
-1. A web server (e.g., Apache or Nginx).
-2. PHP 7.4 or higher.
-3. Composer (for dependency management).
-4. MySQL or MariaDB for the database.
-5. Access to set up cron jobs on the server.
-
-## Folder Structure
-
-Ensure the following folder structure is in place:
+## 📁 Project Structure
 
 ```
-composer.json
-composer.lock
-config/
-controller/
-cron.php
-daily-cron.php
-doc/
-img/
-index.php
-libraries/
-model/
-readme.md
-test.jpg
-test2.jpg
-vendor/
-vission-api.json
+api_template/
+├── composer.json         # Composer dependencies
+├── public/               # Public-facing directory (entry point: index.php)
+├── src/                  # Application source code
+│   ├── Controller/       # Controllers
+│   ├── Models/           # Models
+│   ├── Middleware/       # Middleware
+│   └── Libraries/        # Core and helper classes
+├── docs/                 # Swagger UI and API docs
+├── vendor/               # Composer-installed packages
+└── readme.md             # This file
+└── dev.php               # Development routing script
 ```
 
-## Setup Instructions
+---
 
-### Step 1: Clone the Repository
+## 🚀 Getting Started
 
-Clone the project repository to your server:
+### 1. Clone the Repository
+
 ```bash
-git clone https://github.com/CodeRigi/transmitex-backend.git
+git clone https://github.com/your-username/api_template.git
+cd api_template
 ```
 
-### Step 2: Install Dependencies
+### 2. Install Dependencies
 
-Run Composer to install the required dependencies:
 ```bash
 composer install
 ```
 
-### Step 3: Database Setup
+### 3. Setup Virtual Host or Start Built-in PHP Server
 
-1. Locate the database file stored in the `config` directory (e.g., `config/transmitex.sql`).
-2. Import the database file into your MySQL database:
-   ```bash
-   mysql -u <username> -p <database_name> < config/database.sql
-   ```
-3. Update the configuration in `.env`:
-   ```
-APP=Pharste
-DB_HOST=localhost
-DB_USER=root
-DB_PASS=1
-DB_NAME=transmitex
-JWTKEY=xfxfxfxfxfxfxfxfxfxf
-EN_KEY=xfxfxfxfxfxfxfxfxfxf
-JWTEXP=24
-JWTEXP_REFRESH=48
-MAIL_SENDER=xxxxxxxxx
-CODE_LENGTH=6
-EXCHANGE_RATE_KEY=xxxxxxxxxxxx
-SMILEID_PARTNER_ID=xxxxxxxxxx
-SMILEID_KEY=xxxxxxxxxxxxxxxxxxxxxxx
-SMILEID_SERVER=0
-SMILEID_CALLBACK=xxxxxxxxxxxxxxx
-PAGA_PUBLIC_KEY=xxxxxxxxxxxxxx
-PAGA_BASE_URL=xxxxxxxxx
-PAGA_BUSINESS_BASE_URL=xxxxxxxxxx
-PAGA_HMAC=xxxxxxxx
-PAGA_CURRENCY=NGN
-PAGA_CALLBACK_URL=xxxxxxxxxxxxxx
-PAYMENT_DURATION=6
-DB_TIMEZONE=Africa/Lagos
-TRANSMITEX_EMAIL_HOST={imap.gmail.com:993/imap/ssl}
-TRANSMITEX_EMAIL_USERNAME=xxxxxxxxxxxxxx
-TRANSMITEX_EMAIL_PASSWORD=xxxxxxxxxxxxxx
-APAYLO_KEY=xxxxxxxxxxxxxxxxxx
-ADMIN_TIMEZONE=Africa/Lagos
-FACEBOOK=xxxxxxxxxxx
-x=xxxxxxxxxxx
-INSTAGRAM=xxxxxxxx
-SUPPORT_EMAIL=xxxxxxxx
-MAX_FAILED_LOGIN=5
-RESTRICTED_HOURS=5
-FLAT_RATE=1.5
-PROFIT=3
-NAIRA_FEE=0.5
-   ```
+To start the development server, run the following command:
 
-
-### Step 4: Set Up Cron Jobs
-
-Add the following cron jobs to automate backend tasks. Open the crontab editor:
 ```bash
-crontab -e
+composer dev
 ```
-Add the following lines:
-```bash
-# Run auto-savings.php every hour
-10 * * * * php -q /home/zahajqsw/api.coderigi.co/auto-savings.php
 
-# Run cron.php every 5 minutes
-*/5 * * * * php -q /home/zahajqsw/api.coderigi.co/cron.php
-
-# Run daily-cron.php at midnight
-0 0 * * * php -q /home/zahajqsw/api.coderigi.co/daily-cron.php
-```
-Save and exit.
-
-### Step 5: Test the Setup
-
-1. Verify that the API responds by accessing the base URL (e.g., `http://api.example.com`).
-2. Ensure that cron jobs are running as expected by checking the server logs or debugging the script outputs.
-
-## Notes
-
-- Ensure sensitive data (e.g., API keys and database credentials) are not exposed publicly.
-- Use HTTPS for secure communication.
-- Periodically check and update dependencies with Composer:
-  ```bash
-  composer update
-  ```
-
-## Troubleshooting
-
-- **500 Internal Server Error**: Check the server logs for detailed error messages.
-- **Database Connection Issues**: Verify credentials in `config/config.php` and ensure the database service is running.
+This will start the server and use `dev.php` for custom routing (for development purposes). Ensure your `index.php` is the entry point.
 
 ---
-Your API backend is now ready and running!
+
+## 📖 API Documentation
+
+Swagger documentation is available:
+
+- Navigate to: `http://localhost:8000/docs/index.html`
+- Ensure `swagger.json` is updated with your latest API annotations
+
+
+---
+
+## ✨ Features
+
+- 🔒 Basic routing and sanitization
+- 📦 PSR-4 autoloading via Composer
+- 📚 Swagger (OpenAPI) support for API docs
+- 🧩 MVC pattern for organized development
+- 🧰 Middleware support for custom logic
+- 🧪 Easy to extend for tests and authentication
+
+---
+
+## 🧠 How Routing Works
+
+- URL format: `/controller/method/param1/param2`
+- Controller class and method names are sanitized for security
+- Method is constructed based on HTTP verb and camelCase, e.g.:
+  - `GET /user/login` ➜ `getLogin()`
+  - `POST /user/register` ➜ `postRegister()`
+
+---
+
+## 🛠 Environment Requirements
+
+- PHP 8.0+
+- Composer
+- Apache/Nginx or PHP built-in server
+
+---
+
+## 🧑‍💻 Author
+
+**Utibe Patrick (SD)**\
+Backend Developer
+
+---
+
+## 📜 License
+
+MIT License. Feel free to use and modify.
+```
+
+### Key Updates:
+- **Renamed** the routing script from `router.php` to `dev.php` to indicate that it's for development.
+- **Updated** the command in the "Getting Started" section to reflect the `composer dev` script for running the development server.
+
+Now, running `composer dev` will serve the application using your custom `dev.php` file in the development environment.

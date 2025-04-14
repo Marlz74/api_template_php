@@ -2,8 +2,7 @@
 
 namespace App\Libraries;
 
-use App\Libraries\Response;
-use App\Libraries\Helper;
+use App\Libraries\Helpers;
 
 class Core
 {
@@ -13,83 +12,75 @@ class Core
 
     public function __construct()
     {
+        
         $url = $this->getUrl();
-        // get the first value of the url and check if the class exists in the controller
-        if (file_exists(__DIR__ . '/../Controller/' . ucwords($url[0]) . '.php')) {
+        
+        // Handle controller
+        $controllerName = ucfirst(strtolower((isset($url[0]) && !empty($url[0])) ? $url[0] : $this->currentController));
+        $controllerClass = 'App\\Controller\\' . $controllerName;
 
-            // if it exists, set it as the current controller 
-            $this->currentController = ucfirst($url[0]);
-            unset($url[0]);
-        } else {
-            // controller does not exist
-            Response::set([
-                'statusCode' => 404,
-                'message' => 'Endpoint not found'
-            ]);
-            die();
+        if (!file_exists(__DIR__ . '/../Controller/' . $controllerName . '.php')) {
+            $this->respondNotFound("Controller '$controllerName' not found.");
         }
 
-        require_once __DIR__ . '/../Controller/' . ucwords($this->currentController) . '.php';
-        $controllerClass = 'App\\Controller\\' . $this->currentController;
+        // echo $controllerName;
+        require_once __DIR__ . '/../Controller/' . $controllerName . '.php';
+
+        
+        
+        if (!class_exists($controllerClass)) {
+            $this->respondNotFound("Controller class '$controllerClass' not found.");
+        }
+
         $this->currentController = new $controllerClass;
+        unset($url[0]);
 
-        if (isset($url[1])) {
-            $methodName = strtolower(Helper::getMethod()) . $this->toCamelCase($url[1]);
+        // Handle method
 
-            if (method_exists($this->currentController, $methodName)) {
-                $this->currentMethod = $methodName;
-                unset($url[1]);
-            } else {
-                Response::set([
-                    'statusCode' => 404,
-                    'message' => 'Endpoint not found'
-                ]);
-                die();
-            }
-        } else {
-            // endpoint does not exist
-            Response::set([
-                'statusCode' => 404,
-                'message' => 'Endpoint not found'
-            ]);
-            die();
+        
+
+        $methodName = !isset($url[1]) ? 'getindex' : (strtolower(Helpers::getMethod()) . Helpers::toCamelCase($url[1]));
+
+
+        if (!method_exists($this->currentController, $methodName)) {
+            $this->respondNotFound("Method '$methodName' not found in controller.");
+            exit();
         }
 
+        $this->currentMethod = $methodName;
+        unset($url[1]);
+
+        // Parameters
         $this->params = $url ? array_values($url) : [];
 
         call_user_func_array([$this->currentController, $this->currentMethod], $this->params);
     }
 
-
-    public function getUrl()
+    private function getUrl()
     {
-            // FOR CRON JOBS
-            if (!$_SERVER['REQUEST_METHOD']) {
-                $postData = json_decode(file_get_contents('php://input'), true);
-                if (!empty($postData['controller']) && !empty($postData['method'])) {
-                    return [$postData['controller'], $postData['method']];
-                }
-            }
-
-        
-        if (!empty($_GET['url'])) {
-            $url = rtrim($_GET['url'], '/');
-            $url = filter_var($url, FILTER_SANITIZE_URL);
-            return explode('/', $url);
-        } else {
+        if (!isset($_GET['url']) || empty($_GET['url'])) {
             http_response_code(200);
-            Response::set([
-                "code" => 200,
-                "status" => true,
-                "message" => "Active",
+            Helpers::jsonResponse([
+                'statusCode' => 200,
+                'message' => 'API is active',
+                'status' => true
             ]);
-            die();
+            exit;
         }
+
+        $url = rtrim($_GET['url'], '/');
+        $url = filter_var($url, FILTER_SANITIZE_URL);
+        return explode('/', $url);
     }
 
-    private function toCamelCase($string)
+    private function respondNotFound($message = 'Endpoint not found')
     {
-        $parts = explode('-', $string);
-        return strtolower(array_shift($parts)) . array_reduce($parts, fn($carry, $p) => $carry . ucfirst(strtolower($p)), '');
+        http_response_code(404);
+        Helpers::jsonResponse([
+            'statusCode' => 404,
+            'message' => $message,
+            'status' => false
+        ]);
+        exit;
     }
 }
