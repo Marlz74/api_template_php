@@ -26,8 +26,8 @@ api_template/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/api_template.git
-cd api_template
+git clone https://github.com/Marlz74/api_template_php.git
+cd api_template_php
 ```
 
 ### 2. Install Dependencies
