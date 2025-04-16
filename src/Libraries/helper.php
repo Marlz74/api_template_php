@@ -30,6 +30,13 @@ if (!function_exists('url')) {
     }
 }
 
+/**
+ * Convert a string from kebab-case to camelCase.
+ *
+ * @param string $string The input string in kebab-case.
+ * @return string The converted string in camelCase.
+ */
+
 function toCamelCase($string)
 {
     $parts = explode(' ', str_replace(['-', '_'], ' ', $string));
@@ -91,6 +98,30 @@ function csrf_token()
 function validate_csrf($token)
 {
     return hash_equals($_SESSION['csrf_token'], $token);
+}
+
+/**
+ * Send a JSON response and terminate the script.
+ *
+ * @param array $responseArray An associative array containing the response data.
+ */
+function jsonResponse(array $responseArray): void
+{
+    // Set default values for missing keys
+    $response = [
+        'statusCode' => $responseArray['statusCode'] ?? 200,
+        'status' => $responseArray['status'] ?? false,
+        'message' => $responseArray['message'] ?? '',
+    ];
+
+    // Add 'data' to the response only if it is provided
+    if (isset($responseArray['data'])) {
+        $response['data'] = $responseArray['data'];
+    }
+
+    http_response_code($response['statusCode']);
+    echo json_encode($response);
+    die();
 }
 
 

@@ -60,7 +60,7 @@ class Core
     {
         if (!isset($_GET['url']) || empty($_GET['url'])) {
             http_response_code(200);
-            Helpers::jsonResponse([
+            jsonResponse([
                 'statusCode' => 200,
                 'message' => 'API is active',
                 'status' => true
@@ -76,7 +76,7 @@ class Core
     private function respondNotFound($message = 'Endpoint not found')
     {
         http_response_code(404);
-        Helpers::jsonResponse([
+        jsonResponse([
             'statusCode' => 404,
             'message' => $message,
             'status' => false

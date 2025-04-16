@@ -489,41 +489,7 @@ class Helpers
 
     }
 
-    /**
-     * Send a JSON response and terminate the script.
-     *
-     * @param array $responseArray An associative array containing the response data.
-     */
-    public static function jsonResponse(array $responseArray): void
-    {
-        // Set default values for missing keys
-        $response = [
-            'statusCode' => $responseArray['statusCode'] ?? 200,
-            'status' => $responseArray['status'] ?? false,
-            'message' => $responseArray['message'] ?? '',
-        ];
 
-        // Add 'data' to the response only if it is provided
-        if (isset($responseArray['data'])) {
-            $response['data'] = $responseArray['data'];
-        }
-
-        http_response_code($response['statusCode']);
-        echo json_encode($response);
-        die();
-    }
-
-    /**
-     * Convert a string from kebab-case to camelCase.
-     *
-     * @param string $string The input string in kebab-case.
-     * @return string The converted string in camelCase.
-     */
-    public static function toCamelCase($string)
-    {
-        $parts = explode('-', $string);
-        return strtolower(array_shift($parts)) . array_reduce($parts, fn($carry, $p) => $carry . ucfirst(strtolower($p)), '');
-    }
 
 
 
