@@ -39,7 +39,7 @@ class Core
 
         
 
-        $methodName = !isset($url[1]) ? 'getindex' : (strtolower(Helpers::getMethod()) . Helpers::toCamelCase($url[1]));
+        $methodName = !isset($url[1]) ? 'getindex' : (strtolower(Helpers::getMethod()) . toCamelCase($url[1]));
 
 
         if (!method_exists($this->currentController, $methodName)) {

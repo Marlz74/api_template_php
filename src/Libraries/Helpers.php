@@ -5,65 +5,15 @@ use DateTimeZone;
 use Exception;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
-use PHPMailer\PHPMailer;
-// use PHPMailer\Exception;
-use Dompdf\Dompdf;
-use Dompdf\Options;
+
 
 use Kreait\Firebase\Factory;
 
-use PHPMailer\SMTP;
 
 class Helpers
 {
 
 
-    public static function sendMail($reciever, $subject, $message)
-    {
-        require_once('PHPMailer/PHPMailer.php');
-        require_once('PHPMailer/Exception.php');
-        require_once('PHPMailer/SMTP.php');
-        $mail = new PHPMailer\PHPMailer(true);
-        $mail->isSMTP();
-        // $mail->Host = 'darntl.coderigi.co';
-        $mail->Host = 'coderigi.co';
-
-
-        $mail->SMTPAuth = true;
-        // $mail->Username = 'info@darntl.coderigi.co';
-        // $mail->Password = '$upportD@rn1_2';
-
-        $mail->Username = getenv('MAIL_USERNAME');
-        $mail->Password = getenv('MAIL_PASSWORD');
-
-        $mail->SMTPSecure = 'ssl';
-        $mail->Port = 465;
-        $mail->setFrom(getenv("MAIL_SENDER"), getenv('MAIL_SENDER'));
-
-        // $mail->SMTPDebug = 2; // 0 = off, 1 = client messages, 2 = client and server messages
-        // $mail->Debugoutput = 'html';
-
-        if (is_array($reciever)) {
-            // print_r($reciever); 
-            foreach ($reciever as $recipient) {
-                $mail->addBCC($recipient);
-            }
-        } else {
-            $mail->addAddress($reciever);
-        }
-
-        $mail->isHTML(true);
-        $mail->Subject = $subject;
-        $mail->Body = $message;
-
-        try {
-            $mail->send();
-            return true;
-        } catch (Exception $e) {
-            // print_r($e->getMessage());  
-            return false;
-        }
-    }
     public static function sanitize($data)
     {
         $data = trim($data);
@@ -134,7 +84,7 @@ class Helpers
                 'state' => true,
                 'data' => $decoded
             ];
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Return failure response with error message
             return [
                 'state' => false,
@@ -235,28 +185,7 @@ class Helpers
     }
 
 
-    public static function getConversionRate($base_currency, $quote_currency)
-    {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "https://v6.exchangerate-api.com/v6/" . getenv("EXCHANGE_RATE_KEY") . "/pair/" . strtoupper(trim($base_currency)) . "/" . strtoupper(trim($quote_currency)));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        $response = curl_exec($ch);
-        curl_close($ch);
-
-        $res = json_decode($response, true);
-
-        if (@$res['result'] == 'error') {
-            return [
-                "status" => false,
-                "message" => "malformed request, invalid base or target currency"
-            ];
-        }
-        return [
-            "status" => true,
-            "message" => "Request successful, Complete the transaction within 3 minutes to avoid change in exchange rate",
-            "rate" => @$res['conversion_rate']
-        ];
-    }
+  
 
     public static function differenceInMinute($dateTime, $minutes)
     {
@@ -400,56 +329,11 @@ class Helpers
     }
 
 
-    public static function differenceInHours($date, $hours)
-    {
-        return time() > (strtotime($date) + ($hours * 3600));
-    }
 
 
 
 
-
-    /**
-     * Generate a PDF file from HTML content via dompdf/dompdf.
-     *
-     * @param string $html The HTML content to convert to PDF.
-     * @param string $filename The name of the output PDF file.
-     * @return string|bool The path to the generated PDF file, or false on failure.
-     */
-    public static function generatePDF($html, $filename)
-    {
-        try {
-            // Clear the output buffer
-            if (ob_get_length()) {
-                ob_end_clean();
-            }
-
-            // Set up Dompdf options
-            $options = new Options();
-            $options->set('isHtml5ParserEnabled', true);
-            $options->set('isPhpEnabled', true);
-            $options->set('isRemoteEnabled', true);
-            $options->set('isFontSubsettingEnabled', true);
-            $options->set('isRemoteEnabled', true);
-            $options->set('defaultFont', 'Montserrat');
-
-            // Initialize Dompdf
-            $dompdf = new Dompdf($options);
-            $dompdf->loadHtml($html);
-            $dompdf->setPaper('A4', 'portrait');
-
-            // Generate the PDF and save it to a file
-            $filePath = __DIR__ . '/../../pdf/' . $filename;
-            $dompdf->render();
-            file_put_contents($filePath, $dompdf->output());
-
-            return $filePath;
-        } catch (Exception $e) {
-            // Handle the exception
-            error_log($e->getMessage());
-            return false;
-        }
-    }
+  
 
 
 
