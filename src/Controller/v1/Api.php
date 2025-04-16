@@ -1,5 +1,5 @@
 <?php
-namespace App\Controller;
+namespace App\Controller\v1;
 
 use App\Libraries\Controller;
 use App\Libraries\Helpers;
@@ -41,7 +41,7 @@ class Api extends Controller
      * @return void
      */
     public function getindex(){
-        Helpers::jsonResponse([
+        jsonResponse([
             'statusCode' => 200,
             'message' => 'API is active and working',
             'status' => true
@@ -50,7 +50,7 @@ class Api extends Controller
     }
 
     public function getTYo($id=null){
-        Helpers::jsonResponse([
+        jsonResponse([
             'statusCode' => 200,
             'message' => 'API is active and working',
             'status' => true,

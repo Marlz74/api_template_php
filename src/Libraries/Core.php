@@ -10,21 +10,33 @@ class Core
     protected $currentMethod = '_404';
     protected $params = [];
 
+    protected $version = 'v1';
+
     public function __construct()
     {
         
         $url = $this->getUrl();
+
+
+        $this->version = isset($url[0]) && preg_match('/^v[0-9]+$/', $url[0]) ? strtolower($url[0]) : $this->version;
+
+        if ($this->version !== 'v1') {
+            unset($url[0]); // remove version from URL
+        }
         
         // Handle controller
-        $controllerName = ucfirst(strtolower((isset($url[0]) && !empty($url[0])) ? $url[0] : $this->currentController));
-        $controllerClass = 'App\\Controller\\' . $controllerName;
+        $controllerName = ucfirst(strtolower((isset($url[1]) && !empty($url[1])) ? $url[1] : $this->currentController));
+        $controllerClass = 'App\\Controller\\' . $this->version . '\\' . $controllerName;
 
-        if (!file_exists(__DIR__ . '/../Controller/' . $controllerName . '.php')) {
+        $controllerPath = __DIR__ . '/../Controller/' . $this->version . '/' . $controllerName . '.php';
+
+
+        if (!file_exists($controllerPath)) {
             $this->respondNotFound("Controller '$controllerName' not found.");
         }
 
         // echo $controllerName;
-        require_once __DIR__ . '/../Controller/' . $controllerName . '.php';
+        require_once $controllerPath;
 
         
         
@@ -33,13 +45,13 @@ class Core
         }
 
         $this->currentController = new $controllerClass;
-        unset($url[0]);
+        unset($url[1]);
 
         // Handle method
 
         
 
-        $methodName = !isset($url[1]) ? 'getindex' : (strtolower(Helpers::getMethod()) . toCamelCase($url[1]));
+        $methodName = !isset($url[1]) ? 'getindex' : (strtolower(Helpers::getMethod()) . toCamelCase($url[2]));
 
 
         if (!method_exists($this->currentController, $methodName)) {

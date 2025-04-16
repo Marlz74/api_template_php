@@ -1,8 +1,8 @@
 <?php
-namespace App\Controller;
+namespace App\Controller\v1;
 
 use App\Libraries\Controller;
-use App\Libraries\Helper;
+use App\Libraries\Helpers;
 use App\Libraries\Response;
 
 class Callback extends Controller
@@ -11,13 +11,13 @@ class Callback extends Controller
     private $userid;
     public function __construct()
     {
-        $this->model = $this->model('ApiModel');
+        $this->model('ApiModel');
     }
 
     public function index(){}
 
     public function postpagaPaymentRequest(){
-        if (Helper::getMethod() == 'POST') {
+        if (Helpers::isMethod('POST')) {
             
             $rawData = json_decode(file_get_contents("php://input"), true);
             print_r($this->model->processPagaResponse($rawData));
